@@ -4,7 +4,7 @@ from helium import *
 import time
 import iocextract
 
-def google_search(query, api_key, cse_id, num_results=100):
+def google_search(query, api_key, cse_id, output_file, num_results=100):
     """Perform a Google Custom Search and return result links."""
     results = []
     url = "https://www.googleapis.com/customsearch/v1"
@@ -26,6 +26,10 @@ def google_search(query, api_key, cse_id, num_results=100):
         else:
             print(f"Error: {response.status_code}")
             break  # Stop if an error occurs
+    
+    with open(output_file, "w") as file:
+        for result in results:
+            file.write(result + '\n')
     
     return results
 
@@ -78,12 +82,13 @@ def main():
     
     malware_name = input("Enter the malware or campaign you'd like to search for: ").strip()
     
+    links_filename = f"{malware_name}_links.txt"
     text_filename = f"{malware_name}_body.txt"
     ioc_filename = f"{malware_name}_raw_iocs.txt"
     ip_filename = f"{malware_name}_ips.txt"
     
     print(f"Searching Google for: {malware_name}")
-    results = google_search(malware_name, api_key, cse_id)
+    results = google_search(malware_name, api_key, cse_id, links_filename)
     
     if not results:
         print("No results found.")
