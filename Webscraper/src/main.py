@@ -1,3 +1,4 @@
+import re
 import requests
 from helium import *
 import time
@@ -10,7 +11,7 @@ def google_search(query, api_key, cse_id, num_results=100):
     
     for start in range(1, num_results, 10):  # API returns 10 results per request
         params = {
-            'q': f'allintext:"IP address" {query}',
+            'q': f'allintext:"IOC" {query}',
             'key': api_key,
             'cx': cse_id,
             'num': 10,
@@ -50,10 +51,23 @@ def extract_iocs_from_file(input_file, output_file):
     with open(input_file, "r", encoding="utf-8") as file:
         content = file.read()
     
-    ips = set(iocextract.extract_iocs(content, refang=True))
+    iocs = set(iocextract.extract_iocs(content, refang=True))
     
     with open(output_file, "w", encoding="utf-8") as file:
-        file.write("\n".join(ips))
+        file.write("\n".join(iocs))
+
+def extract_ips_from_ioc(input_file, output_file):
+    """Extract IPs from the IOCs. Since iocextract doesn't do this well, I'll use a custom regex"""
+    with open(input_file, "r", encoding="utf-8") as file:
+        content = file.read().splitlines()
+
+    ip_regex = re.compile(r"\b((?:\d{1,3}\.){3}\d{1,3})\b")
+
+    with open(output_file, "w", encoding="utf-8") as file:
+        for ioc in content:
+            if ip_regex.match(ioc):
+                file.write(ioc + '\n')
+
 
 def main():
     with open("api_key.txt", "r") as file:
@@ -66,6 +80,7 @@ def main():
     
     text_filename = f"{malware_name}_body.txt"
     ioc_filename = f"{malware_name}_raw_iocs.txt"
+    ip_filename = f"{malware_name}_ips.txt"
     
     print(f"Searching Google for: {malware_name}")
     results = google_search(malware_name, api_key, cse_id)
@@ -80,7 +95,9 @@ def main():
     print("Extracting IOCs...")
     extract_iocs_from_file(text_filename, ioc_filename)
     
-    print(f"Process complete. Results saved to {text_filename} and {ioc_filename}.")
+    print("Extracting IP Addresses...")
+    extract_ips_from_ioc(ioc_filename, ip_filename)
 
+    print(f"Process complete. Results saved to {text_filename}, {ioc_filename} and {ip_filename}.")
 if __name__ == "__main__":
     main()
