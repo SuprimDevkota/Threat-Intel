@@ -42,6 +42,7 @@ def extract_text_from_links(links, output_file):
             try:
                 go_to(link)
                 curr_body = find_all(S('//body'))[0].web_element.text
+                file.write(link + "\n---------\n")
                 file.write(curr_body + "\n\n")
                 print(f"Processed {count}/{len(links)}: {link}")
                 time.sleep(1)  # Adjust delay as needed
