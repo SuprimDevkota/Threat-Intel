@@ -11,7 +11,7 @@ def google_search(query, api_key, cse_id, output_file, num_results=100):
     
     for start in range(1, num_results, 10):  # API returns 10 results per request
         params = {
-            'q': f'intext:"{query}"',
+            'q': f'intext:"{query}" intext:"IP Address"',
             'key': api_key,
             'cx': cse_id,
             'num': 10,
@@ -74,11 +74,11 @@ def extract_ips_from_ioc(input_file, output_file):
 
 
 def main():
-    # with open("api_key.txt", "r") as file:
-    #     api_key = file.read().strip()
+    with open("api_key.txt", "r") as file:
+        api_key = file.read().strip()
     
-    # with open("cse_id.txt", "r") as file:
-    #     cse_id = file.read().strip()
+    with open("cse_id.txt", "r") as file:
+        cse_id = file.read().strip()
     
     malware_name = input("Enter the malware or campaign you'd like to search for: ").strip()
     
@@ -87,18 +87,18 @@ def main():
     ioc_filename = f"{malware_name}_raw_iocs.txt"
     ip_filename = f"{malware_name}_ips.txt"
     
-    # print(f"Searching Google for: {malware_name}")
-    # results = google_search(malware_name, api_key, cse_id, links_filename)
+    print(f"Searching Google for: {malware_name}")
+    results = google_search(malware_name, api_key, cse_id, links_filename)
     
-    # if not results:
-    #     print("No results found.")
-    #     return
+    if not results:
+        print("No results found.")
+        return
     
-    # print(f"Extracting text from {len(results)} links...")
-    # extract_text_from_links(results, text_filename)
+    print(f"Extracting text from {len(results)} links...")
+    extract_text_from_links(results, text_filename)
     
-    # print("Extracting IOCs...")
-    # extract_iocs_from_file(text_filename, ioc_filename)
+    print("Extracting IOCs...")
+    extract_iocs_from_file(text_filename, ioc_filename)
     
     print("Extracting IP Addresses...")
     extract_ips_from_ioc(ioc_filename, ip_filename)
