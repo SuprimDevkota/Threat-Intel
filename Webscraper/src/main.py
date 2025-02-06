@@ -11,7 +11,7 @@ def google_search(query, api_key, cse_id, output_file, num_results=100):
     
     for start in range(1, num_results, 10):  # API returns 10 results per request
         params = {
-            'q': f'intext:"{query}" intext:"IP Address"',
+            'q': f'intext:{query} (intext:"IP" OR intext:"IOCs")',
             'key': api_key,
             'cx': cse_id,
             'num': 10,
