@@ -8,7 +8,7 @@ import os
 import pdfplumber
 import shutil
 
-def google_search(query, api_key, cse_id, output_file, pdf_output_file, num_results=100):
+def google_search(query, api_key, cse_id, output_file, pdf_output_file, num_results=100, days=None):
     """Perform a Google Custom Search and separate .pdf links from other results."""
     results = []
     pdf_results = []
@@ -22,6 +22,10 @@ def google_search(query, api_key, cse_id, output_file, pdf_output_file, num_resu
             'num': 10,
             'start': start
         }
+        
+        # Add date restriction if days is specified
+        if days:
+            params['dateRestrict'] = f'd{days}'
         
         response = requests.get(url, params=params)
         
@@ -204,6 +208,7 @@ def main():
         cse_id = file.read().strip()
     
     malware_name = input("Enter the malware or campaign you'd like to search for: ").strip()
+    days = input("Enter the number of past days to search (press Enter to skip): ").strip() or None
     
     links_filename = f"{malware_name}_links.txt"
     pdf_links_filename = f"{malware_name}_pdf_links.txt"
@@ -212,7 +217,7 @@ def main():
     ip_filename = f"{malware_name}_ips.txt"
     
     print(f"Searching Google for: {malware_name}")
-    results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename)
+    results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename, days=days)
 
     # For actual links 
     links_processor(results, body_filename, ioc_filename, ip_filename)
