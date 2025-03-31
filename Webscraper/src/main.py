@@ -75,11 +75,11 @@ def extract_text_from_links(links, output_file):
 
 def extract_iocs_from_file(input_file, output_file):
     """Extracts IOCs (Indicators of Compromise) from a text file and saves them."""
+    iocs = set()
     with open(input_file, "r", encoding="utf-8") as file:
-        content = file.read()
-    
-    iocs = set(iocextract.extract_iocs(content, refang=True))
-    
+        for line in file:
+            iocs.update(iocextract.extract_iocs(line, refang=True))
+        
     with open(output_file, "w", encoding="utf-8") as file:
         file.write("\n".join(iocs))
 
@@ -219,13 +219,14 @@ def main():
     ip_filename = f"{malware_name}_ips.txt"
     
     print(f"Searching Google for: {malware_name}")
-    results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename, days=days)
+    extract_iocs_from_file("Redline Stealer_body.txt", "Redline Stealer_raw_iocs.txt")
+    # results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename, days=days)
 
     # For actual links 
-    links_processor(results, body_filename, ioc_filename, ip_filename)
+    # links_processor(results, body_filename, ioc_filename, ip_filename)
 
     # For pdfs
-    pdf_processor(pdf_results, body_filename, ip_filename)
+    # pdf_processor(pdf_results, body_filename, ip_filename)
 
 if __name__ == "__main__":
     main()
