@@ -16,7 +16,7 @@ def google_search(query, api_key, cse_id, output_file, pdf_output_file, num_resu
     
     for start in range(1, num_results, 10):  # API returns 10 results per request
         params = {
-            'q': f'intext:"{query}" (intext:"IP" OR intext:"IOCs")',
+            'q': f'intext:"{query}" (intext:"IP Address" OR intext:"IOCs")',
             'key': api_key,
             'cx': cse_id,
             'num': 10,
@@ -68,6 +68,8 @@ def extract_text_from_links(links, output_file):
                 time.sleep(1)  # Adjust delay as needed
             except Exception as e:
                 print(f"Error processing {link}: {e}")
+        
+        file.write("\n\n\nPDFS!~89723\n\n\n")
     
     browser.close()
 
