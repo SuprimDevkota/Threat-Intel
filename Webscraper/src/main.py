@@ -219,14 +219,13 @@ def main():
     ip_filename = f"{malware_name}_ips.txt"
     
     print(f"Searching Google for: {malware_name}")
-    extract_iocs_from_file("Redline Stealer_body.txt", "Redline Stealer_raw_iocs.txt")
-    # results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename, days=days)
+    results, pdf_results = google_search(malware_name, api_key, cse_id, links_filename, pdf_links_filename, days=days)
 
     # For actual links 
-    # links_processor(results, body_filename, ioc_filename, ip_filename)
+    links_processor(results, body_filename, ioc_filename, ip_filename)
 
     # For pdfs
-    # pdf_processor(pdf_results, body_filename, ip_filename)
+    pdf_processor(pdf_results, body_filename, ip_filename)
 
 if __name__ == "__main__":
     main()
