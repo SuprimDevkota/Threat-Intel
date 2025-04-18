@@ -202,6 +202,16 @@ def pdf_processor(pdf_results, body_filename, ip_filename):
     print("Cleaned up temporary PDF files.")
     print(f"PDF processing complete. Results saved to {body_filename} and {ip_filename}.")
 
+def remove_duplicates(input_file):
+    mal_ips = set()
+    with open(input_file, 'r', encoding='utf-8') as file:
+        for line in file:
+            mal_ips.add(line.strip())
+
+    with open(input_file, 'w', encoding='utf-8') as file:
+        for ip in sorted(mal_ips): 
+            file.write(ip + '\n')
+
 def main():
     with open("api_key.txt", "r") as file:
         api_key = file.read().strip()
@@ -226,6 +236,9 @@ def main():
 
     # For pdfs
     pdf_processor(pdf_results, body_filename, ip_filename)
+
+    # Remove duplicates to conserve API usage
+    remove_duplicates(ip_filename)
 
 if __name__ == "__main__":
     main()
